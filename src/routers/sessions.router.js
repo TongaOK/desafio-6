@@ -1,5 +1,6 @@
 import { Router } from "express";
 import UserModel from "../models/user.model.js";
+import { createHash, isValidPassword } from "../utilities.js";
 
 const router = Router();
 
@@ -31,7 +32,10 @@ router.post("/register", async (req, res) => {
 
 
 
-  const newUser = await UserModel.create(body);
+  const newUser = await UserModel.create({
+    ...body, 
+    password: createHash(body.password)
+  });
 
 
   await newUser.save();
@@ -55,7 +59,7 @@ router.post("/login", async (req, res) => {
     return res.status(401).send("Correo o contraseña invalidos 😨.");
   }
 
-  const isPassValid = user.password === password;
+  const isPassValid = isValidPassword(password, user);
   if (!isPassValid) {
     return res.status(401).send("Correo o contraseña invalidos 😨.");
   }
