@@ -50,7 +50,7 @@ router.post("/register", passport.authenticate('register', { failureRedirect: '/
       res.redirect('/api/sessions/login');
   })
 
-router.post("/login", async (req, res) => {
+/* router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   const user = await UserModel.findOne({ email });
@@ -73,8 +73,13 @@ router.post("/login", async (req, res) => {
   const { first_name, last_name } = user;
   req.session.user = { first_name, last_name, email, role: user.role };
   res.redirect("/api/products");
-});
+}); */
 
+router.post("/login", passport.authenticate('login', { failureRedirect: '/login' }), 
+  (req, res) => {
+    req.session.user = req.user;
+      res.redirect('/api/sessions/profile');
+  })
 
 
 router.get("/logout", (req, res) => {

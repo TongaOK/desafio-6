@@ -25,6 +25,22 @@ export const init = () => {
         }
     }))
 
+    passport.use("login", new LocalStrategy(opts, async (req, email, password, done) => {
+        try {
+            const user = await UserModel.findOne({ email })
+            if (!user) {
+                return done(new Error('Correo o contraseña invalidos'))
+            }
+            const isPassValid = isValidPassword(password, user);
+            if (!isPassValid) {
+                return done(new Error('Correo o contraseña invalidos'))
+            }
+            done(null, user)
+        } catch (error) {
+            done (new Error (`Ocurrio un error durante la autentacion ${error.message}.`))
+        }
+    }))
+
     passport.serializeUser((user, done) => {
         done(null, user._id)
     })
