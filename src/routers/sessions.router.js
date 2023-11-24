@@ -1,6 +1,7 @@
 import { Router } from "express";
 import UserModel from "../models/user.model.js";
 import { createHash, isValidPassword } from "../utilities.js";
+import passport from "passport";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get("/register", (req, res) => {
   res.render("register", { title: "Register" });
 });
 
-router.post("/register", async (req, res) => {
+/* router.post("/register", async (req, res) => {
   const { body } = req;
 
 
@@ -42,7 +43,12 @@ router.post("/register", async (req, res) => {
 
   console.log("newUser", newUser);
   res.redirect("/api/sessions/login");
-});
+}); */
+
+router.post("/register", passport.authenticate('register', { failureRedirect: '/register' }), 
+  (req, res) => {
+      res.redirect('/api/sessions/login');
+  })
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;

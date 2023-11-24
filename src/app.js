@@ -5,6 +5,7 @@ import handlebars from "express-handlebars";
 import { URI } from "./db/mongodb.js"
 import MongoStore from "connect-mongo";
 import expressSession from "express-session";
+import { init as initPassportConfig } from "./config/passport.config.js"
 
 import productsRouter from "./routers/products.router.js";
 import cartsRouter from "./routers/carts.router.js";
@@ -12,6 +13,7 @@ import homeRouter from "./routers/home.router.js";
 import RTPRouter from "./routers/realtimeproducts.router.js";
 import sessionsRouter from "./routers/sessions.router.js";
 import dotenv from "dotenv";
+import passport from "passport";
 
 dotenv.config();
 
@@ -43,6 +45,10 @@ app.engine(
 console.log(__dirname);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "handlebars");
+
+initPassportConfig();
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use("/", homeRouter);
 app.use("/api/products", productsRouter);
