@@ -28,52 +28,11 @@ router.get("/register", (req, res) => {
   res.render("register", { title: "Register" });
 });
 
-/* router.post("/register", async (req, res) => {
-  const { body } = req;
-
-
-
-  const newUser = await UserModel.create({
-    ...body, 
-    password: createHash(body.password)
-  });
-
-
-  await newUser.save();
-
-  console.log("newUser", newUser);
-  res.redirect("/api/sessions/login");
-}); */
-
 router.post("/register", passport.authenticate('register', { failureRedirect: '/register' }), 
   (req, res) => {
       res.redirect('/api/sessions/login');
   })
 
-/* router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await UserModel.findOne({ email });
-  const isAdmin =
-    email === "adminCoder@coder.com" && password === "adminCod3r123";
-
-  if (isAdmin) {
-    user.role = "admin";
-  }
-
-  if (!user) {
-    return res.status(401).send("Correo o contraseña invalidos 😨.");
-  }
-
-  const isPassValid = isValidPassword(password, user);
-  if (!isPassValid) {
-    return res.status(401).send("Correo o contraseña invalidos 😨.");
-  }
-
-  const { first_name, last_name } = user;
-  req.session.user = { first_name, last_name, email, role: user.role };
-  res.redirect("/api/products");
-}); */
 
 router.post("/login", passport.authenticate('login', { failureRedirect: '/login' }), 
   (req, res) => {
@@ -87,5 +46,13 @@ router.get("/logout", (req, res) => {
     res.redirect("/api/sessions/login");
   });
 });
+
+router.get("/github", passport.authenticate("github", { scope: ["user:email"] },async(req,res)=>{}));
+
+router.get("/github/callback", passport.authenticate("github", { failureRedirect: "/login" }),async(req,res)=>{
+  //if (req){req.session.user = req.user}
+  req.session.user = req.user;
+  res.redirect('/');
+})
 
 export default router;

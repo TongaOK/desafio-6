@@ -5,7 +5,7 @@ import handlebars from "express-handlebars";
 import { URI } from "./db/mongodb.js"
 import MongoStore from "connect-mongo";
 import expressSession from "express-session";
-import { init as initPassportConfig } from "./config/passport.config.js"
+import { init as initPassportConfig, githubStrategyInit } from "./config/passport.config.js"
 
 import productsRouter from "./routers/products.router.js";
 import cartsRouter from "./routers/carts.router.js";
@@ -47,6 +47,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "handlebars");
 
 initPassportConfig();
+githubStrategyInit();
 app.use(passport.initialize())
 app.use(passport.session())
 
